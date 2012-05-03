@@ -44,10 +44,10 @@ the selected database by adding two public variables to the CI instance. One
 with the same name as the config group, and another one with the generic name
 _"mdb"_, both pointing to the same MongoDB instance.  
 So if you have a group named 'mydb' you'll be able to do this
-`$this->mydb->some_coll->findAll()` for example, but if the variable name is
+`$this->mydb->some_coll->find()` for example, but if the variable name is
 already taken, MongoL will **not** overwrite it, instead you can still access
-it through "mdb" like so `$this->mdb->some_coll->findAll()` or through the
-library name variable like this `$this->mongol->mydb->some_coll->findAll()`.
+it through "mdb" like so `$this->mdb->some_coll->find()` or through the
+library name variable like this `$this->mongol->mydb->some_coll->find()`.
 
 Remember that the latter is the native way, so if you mess up the database name
 the PHP MongoDB driver will try to issue an equivalent to the shell's `use mydb`
