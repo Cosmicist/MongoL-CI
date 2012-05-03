@@ -16,7 +16,7 @@ class Mongol extends Mongo
     protected $config;
     protected $dsn;
     
-    public function __construct( $group = NULL )
+    public function __construct( $group = NULL, $disable_shortcut = FALSE )
     {
         // Build dsn
         $this->_buildDSN( $group );
@@ -24,15 +24,21 @@ class Mongol extends Mongo
         // Connect!
         parent::__construct( $this->dsn );
         
-        // Get CI instance
-        $CI = get_instance();
-        
-        // Create a "shortcut" on the CI instance with the group name if available
-        if( ! $CI->{$this->group} )
-            $CI->{$this->group} = $this->{$this->dbname};
-        
-        // Create another shortcut with a generic name "mdb"
-        $CI->mdb = $this->{$this->dbname};
+        // Create the shortcuts only if the're enabled
+        if( ! $disable_shortcut )
+        {
+            // Get CI instance
+            $CI = get_instance();
+
+            // Create a "shortcut" on the CI instance with the group/db name if available
+            $dbns = $this->group ? $this->group : $this->dbname;
+            if( ! $CI->{$dbns} )
+                $CI->{$dbns} = $this->{$this->dbname};
+
+            // Create another shortcut with a generic name "mdb"
+            if( ! $group )
+                $CI->mdb = $this->{$this->dbname};
+        }
     }
     
     private function _buildDSN( $group = NULL )
@@ -66,7 +72,13 @@ class Mongol extends Mongo
             $this->dsn = "mongodb://$auth{$c['host']}$port/{$c['name']}";
         }
         else
+        {
             $this->dsn = $group;
+            
+            // Try to get the DB name
+            if( preg_match('/\/([a-z0-9\-_]+)$/i', $group, $m) )
+                $this->dbname = $m[1];
+        }
         
         return $this->dsn;
     }
@@ -75,10 +87,10 @@ class Mongol extends Mongo
      * Creates a new connection to a DB using the given group or DSN
      * 
      * @param type $group The config group name or connection DSN
-     * @return \self 
+     * @return Mongol
      */
-    public static function use_db( $group )
+    public static function use_db( $group, $disable_shortcut = FALSE )
     {
-        return new self( $group );
+        return new self( $group, $disable_shortcut );
     }
 }
