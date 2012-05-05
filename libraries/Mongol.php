@@ -41,21 +41,31 @@ class Mongol extends Mongo
         }
     }
     
+    public function get_db()
+    {
+        return $this->{$this->dbname};
+    }
+    
     private function _buildDSN( $group = NULL )
     {
         // If $group does not look like a dsn, try to use it as a config group
         if( ! preg_match('/^mongodb:\/\//i', $group) )
         {
-            // Load config
-            include_once APPPATH.'config/mongodb.php';
+            $mdb = $this->config;
             
-            // Save config
-            $this->config = $mdb;
+            // Load config if it wasn't already loaded
+            if( ! $mdb )
+            {
+                include APPPATH.'config/mongodb.php';
+
+                // Save config
+                $this->config = $mdb;
+            }
             
             $this->group = $group = $group ? $group : $mdb['default_group'];
             
             // Select config
-            if( ! ( $c = @$mdb[$group] ) )
+            if( ! ( $c = $mdb[$group] ) )
                 throw new MongoConnectionException("There is no config group named '$group' on your application's config/mongodb.php!");
             
             // Check for auth data

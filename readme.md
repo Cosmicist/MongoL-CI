@@ -46,12 +46,15 @@ _"mdb"_, both pointing to the same MongoDB instance.
 So if you have a group named 'mydb' you'll be able to do this
 `$this->mydb->some_coll->find()` for example, but if the variable name is
 already taken, MongoL will **not** overwrite it, instead you can still access
-it through "mdb" like so `$this->mdb->some_coll->find()` or through the
+the db through "mdb" like so `$this->mdb->some_coll->find()` or through the
 library name variable like this `$this->mongol->mydb->some_coll->find()`.
 
 Remember that the latter is the native way, so if you mess up the database name
 the PHP MongoDB driver will try to issue an equivalent to the shell's `use mydb`
-selecting a new database without failing.
+selecting a new database without failing.  
+There's also been cases where the authentication of the db returned using this
+way is dropped when used before the CodeIgniter core class is loaded, if that's
+the case you need to get the db with `$this->mongol->get_db()`.
 
 Accessing the db with `$this->mdb` is the preferred way, since you may want to
 change the group name or use a different group in development than the one used
@@ -79,7 +82,7 @@ through `$this->otherdb`.
 want it to create the shortcuts, you can pass TRUE as the second parameter:
 
     $m = Mongol::use_db('otherdb', TRUE);
-    $otherdb = $m->otherdb;
+    $otherdb = $m->get_db();
 
 _`Mongol::use_db` will never overwrite the original connection and shortcuts._
 
@@ -98,9 +101,9 @@ Installation
 
 1.  Download and install Sparks into your project from http://getsparks.org/.
 2.  Open the terminal, go to your CI+Sparks project root and type  
-    
-    `php tools/spark install -v1.0.0 MongoL`
-    
+        
+        `php tools/spark install -v1.0.1 MongoL`
+        
 Copyright & License
 -------------------
 
