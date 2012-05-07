@@ -27,6 +27,7 @@ the corresponding group name).
 
 Here is a config example:
 
+    :::php
     $mdb['default_group']    = 'mydb';
     
     $mdb['mydb']['host'] = 'localhost';
@@ -81,6 +82,7 @@ through `$this->otherdb`.
 `Mongol::use_db` will always return the new instance as well. But if you don't
 want it to create the shortcuts, you can pass TRUE as the second parameter:
 
+    :::php
     $m = Mongol::use_db('otherdb', TRUE);
     $otherdb = $m->get_db();
 
@@ -102,7 +104,7 @@ Installation
 1.  Download and install Sparks into your project from http://getsparks.org/.
 2.  Open the terminal, go to your CI+Sparks project root and type  
         
-        `php tools/spark install -v1.0.1 MongoL`
+        php tools/spark install -v1.0.1 MongoL
         
 Copyright & License
 -------------------
