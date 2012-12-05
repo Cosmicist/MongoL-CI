@@ -27,16 +27,37 @@ the corresponding group name).
 
 Here is a config example:
 
-    :::php
-    $mdb['default_group']    = 'mydb';
-    
-    $mdb['mydb']['host'] = 'localhost';
-    $mdb['mydb']['port'] = 27017;
-    $mdb['mydb']['user'] = 'db_user';
-    $mdb['mydb']['pass'] = 'db_pass';
-    $mdb['mydb']['name'] = 'db_name';
+```php
+<?php
+$mdb['default_group']    = 'mydb';
 
-_The 'port', 'user' and 'pass' parameters are optional._
+$mdb['mydb']['host'] = 'localhost';
+$mdb['mydb']['port'] = 27017;
+$mdb['mydb']['user'] = 'db_user';
+$mdb['mydb']['pass'] = 'db_pass';
+$mdb['mydb']['name'] = 'db_name';
+$mdb['mydb']['safe'] = 2;
+?>
+```
+
+_The 'port', 'user', 'pass' and 'safe' parameters are optional._
+
+#### The _"safe"_ parameter
+
+From PECL mongoclient >= 1.3.0 The `Mongo` class is deprecated in favor of
+`MongoClient`. This new class has acknowledged writes (previously called "safe"
+mode) enabled by default on a connection level, which means that the "safe"
+option on queries is now deprecated as well in favor of the "w" option.
+
+We still can enable non-acknowledged writes on a connection level by setting the
+"w" option on the DSN string and that's what this "safe" config parameter does
+here.  
+By default it is set to true, to respect the default driver behavior, but it can
+be set to 1 (for non-"safe" writes) and 2 (for acknowledged writes on replica
+sets).
+
+More information about this can be found
+[here](http://derickrethans.nl/mongoclient.html).
 
 ### Accessing the database
 
@@ -72,7 +93,12 @@ mongodb.php config.
 If you need to connect to a database that is not defined in your config file,
 you can pass a DSN string instead of a group name, MongoL will recognize it and
 try to connect to it, for example:
-`Mongol::use_db("mongo://user:pass@localhost/otherdb")`
+
+```php
+<?php
+Mongol::use_db("mongo://user:pass@localhost/otherdb")
+?>
+```
 
 If the `$group` parameter you passed `Mongol::use_db` corresponds to a valid
 group name, MongoL will try to create a shortcut in CI instance with this name.
@@ -82,9 +108,12 @@ through `$this->otherdb`.
 `Mongol::use_db` will always return the new instance as well. But if you don't
 want it to create the shortcuts, you can pass TRUE as the second parameter:
 
-    :::php
-    $m = Mongol::use_db('otherdb', TRUE);
-    $otherdb = $m->get_db();
+```php
+<?php
+$m = Mongol::use_db('otherdb', TRUE);
+$otherdb = $m->get_db();
+?>
+```
 
 _`Mongol::use_db` will never overwrite the original connection and shortcuts._
 
@@ -93,7 +122,7 @@ Requirements
 
 * **CodeIgniter 2+**
 * **PHP 5.1+**
-* **MongoDB PHP Driver** [More info](http://php.net/mongo)
+* **MongoDB PHP Driver 1.3.0+** [More info](http://php.net/mongo)
 * **MongoDB 2.0.4** It may work with older versions...
 
 Installation
@@ -104,7 +133,7 @@ Installation
 1.  Download and install Sparks into your project from http://getsparks.org/.
 2.  Open the terminal, go to your CI+Sparks project root and type  
         
-        php tools/spark install -v1.0.1 MongoL
+        php tools/spark install -v1.1.0 MongoL
         
 Copyright & License
 -------------------

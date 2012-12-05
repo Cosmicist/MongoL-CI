@@ -3,13 +3,13 @@
 /**
  * Mongol - Simple MongoDB micro-wrapper library for CodeIgniter
  * 
- * @version 1.0.0
+ * @version 1.1.0
  * @author Luciano Longo <luciano.longo@gmail.com>
  * @copyright Copyright (c), Luciano Longo
  * @license http://opensource.org/licenses/MIT MIT License
  * @link http://hg.longo.me/mongol
  */
-class Mongol extends Mongo
+class Mongol extends MongoClient
 {
     protected $dbname;
     protected $group;
@@ -78,8 +78,12 @@ class Mongol extends Mongo
             
             // Save the DB name apart
             $this->dbname = $c['name'];
+
+            // Set the acknowledged writes
+            if( $c['safe'] )
+                $w = '?w='.((int)$c['safe']);
             
-            $this->dsn = "mongodb://$auth{$c['host']}$port/{$c['name']}";
+            $this->dsn = "mongodb://$auth{$c['host']}$port/{$c['name']}$w";
         }
         else
         {
